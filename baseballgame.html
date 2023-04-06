@@ -5,78 +5,83 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>숫자야구게임</title>
-  </head>
-  <body>
+
     <script>
-      // 무작위 숫자 생성
+      // 랜덤숫자 정답 생성
+      let answer = new Set();
       const generateAnswer = () => {
-        const answer = [];
-        while (answer.length < 3) {
+        while (answer.size < 3) {
           const num = Math.floor(Math.random() * 10);
-          if (!answer.includes(num)) {
-            answer.push(num);
-          }
+          answer.add(num);
         }
-        return answer;
       };
 
-      // 입력 검증
-      const checkInput = input => {
-        if (input.length !== 3 || isNaN(input)) {
-          alert('숫자 3자리만 입력 가능합니다. 다시 입력해주세요.');
-          return false;
-        }
-        if (new Set(input).size !== 3) {
-          alert('중복된 숫자는 입력 불가합니다. 다시 입력해주세요.');
+      // 입력값 검증
+      const isValidInput = input => {
+        if (isNaN(input) || new Set(input).size !== 3) {
+          alert('중복되지 않는 숫자 3자리만 입력해주세요.');
           return false;
         }
         return true;
       };
 
-      // 게임 실행하는 함수
-      const playBaseball = () => {
-        const answer = generateAnswer();
-        alert('컴퓨터가 숫자를 생성하였습니다. 답을 맞춰보세요!');
+      // 스트라이크와 볼의 개수를 체크하는 함수
+      const checkStrikeAndBall = input => {
+        let strikeCnt = 0;
+        let ballCnt = 0;
 
-        let round = 1;
-        let input;
-
-        while (true) {
-          input = prompt(round === 1 ? `${round} 번째 시도` : `${round} 번째 시도 이전값 ${input}`);
-          
-          if (!input) {
-            break;
-          }
-          if (!checkInput(input)) {
-            continue;
-          }
-
-          let strikeCnt = 0;
-          let ballCnt = 0;
-
-          for (let j = 0; j < answer.length; j++) {
-            const idx = input.indexOf(answer[j]);
-            if (idx !== -1) {
-              // 하나라도 같은게 있다면!
-              if (idx === j) {
-                strikeCnt++;
-              } else {
-                ballCnt++;
-              }
+        for (let j = 0; j < input.length; j++) {
+          const num = Number(input[j]);
+          if (answer.has(num)) {
+            if (Array.from(answer)[j] === num) {
+              strikeCnt++;
+            } else {
+              ballCnt++;
             }
           }
+        }
+
+        return { strikeCnt, ballCnt };
+      };
+
+      // 게임을 플레이
+      const playGame = () => {
+        generateAnswer();
+        alert('컴퓨터가 숫자를 생성하였습니다. 답을 맞춰보세요!');
+
+        let input;
+        let round = 1;
+
+        while (true) {
+          let promptMsg = `${round} 번째 시도`;
+          if (input !== undefined) promptMsg += ` (이전 입력값 :  ${input})`;
+
+          input = prompt(promptMsg);
+          if (input === null) { // 취소
+            alert('게임을 종료합니다.');
+            break;
+          }
+          if (!isValidInput(input)) {
+            continue;
+          }
+          
+          const { strikeCnt, ballCnt } = checkStrikeAndBall(input);
+
+          let result = '';
+          result += strikeCnt > 0 ? `${strikeCnt}S` : '0S';
+          result += ballCnt > 0 ? `${ballCnt}B` : '0B';
 
           if (strikeCnt === 3) {
-            alert(`${round}번만에 성공하셨습니다.`);
+            alert(`${round}번만에 맞히셨습니다.`);
             break;
           } else {
-            alert(`${strikeCnt}S${ballCnt}B`);
+            alert(result);
           }
           round++;
         }
       };
-
-      playBaseball();
+      playGame();
     </script>
-  </body>
+  </head>
+  <body></body>
 </html>
