@@ -8,16 +8,34 @@
   </head>
   <body>
     <script>
-      const playBaseball = () => {
-        const answerArr = [];
-
-        while (answerArr.length < 3) {
+      // 무작위 숫자 생성
+      const generateAnswer = () => {
+        const answer = [];
+        while (answer.length < 3) {
           const num = Math.floor(Math.random() * 10);
-          if (!answerArr.includes(num)) {
-            answerArr.push(num);
+          if (!answer.includes(num)) {
+            answer.push(num);
           }
         }
+        return answer;
+      };
 
+      // 입력 검증
+      const checkInput = input => {
+        if (input.length !== 3 || isNaN(input)) {
+          alert('숫자 3자리만 입력 가능합니다. 다시 입력해주세요.');
+          return false;
+        }
+        if (new Set(input).size !== 3) {
+          alert('중복된 숫자는 입력 불가합니다. 다시 입력해주세요.');
+          return false;
+        }
+        return true;
+      };
+
+      // 게임 실행하는 함수
+      const playBaseball = () => {
+        const answer = generateAnswer();
         alert('컴퓨터가 숫자를 생성하였습니다. 답을 맞춰보세요!');
 
         let round = 1;
@@ -25,27 +43,21 @@
 
         while (true) {
           input = prompt(round === 1 ? `${round} 번째 시도` : `${round} 번째 시도 이전값 ${input}`);
-
+          
           if (!input) {
             break;
           }
-
-          if (input.length !== 3 || isNaN(input)) {
-            alert('숫자 3자리만 입력 가능합니다. 다시 입력해주세요.');
-            continue;
-          }
-
-          if (new Set(input).size !== 3) {
-            alert('중복된 숫자는 입력 불가합니다. 다시 입력해주세요.');
+          if (!checkInput(input)) {
             continue;
           }
 
           let strikeCnt = 0;
           let ballCnt = 0;
 
-          for (let j = 0; j < answerArr.length; j++) {
-            const idx = input.indexOf(answerArr[j]);
-            if (input.includes(answerArr[j])) {
+          for (let j = 0; j < answer.length; j++) {
+            const idx = input.indexOf(answer[j]);
+            if (idx !== -1) {
+              // 하나라도 같은게 있다면!
               if (idx === j) {
                 strikeCnt++;
               } else {
