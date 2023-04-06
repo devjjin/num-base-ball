@@ -5,66 +5,47 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>숫자야구게임</title>
-
+  </head>
+  <body>
     <script>
-      // 1. 랜덤 숫자 만들기
-      //(0~9사이 무작위로 서로 다른 숫자 3개)g
-      const answerArr = [];
-      
-      while (answerArr.length < 3) {
-        const num = Math.floor(Math.random() * 10);
-        // 중복 되지 않도록 (해당 랜덤숫자가 없을때만 answer 정답배열에 push)
-        if (answerArr.indexOf(num) === -1) {
-          answerArr.push(num);
-        }
-      }
-      // console.log(answerArr);
+      const playBaseball = () => {
+        const answerArr = [];
 
-      //2. 한자리 숫자에 대해 볼, 스크라이크 판단 하는 부분 구현하기
-      // - 숫자의 값과 위치가 모  두 일치하면 S
-      // - 숫자의 값은 일치하지만 위치가 틀렸으면 B
-      alert('컴퓨터가 숫자를 생성하였습니다. 답을 맞춰보세요!');
-
-      let input;
-      let round = 1;
-
-
-      const checkNum = input => {
-
-        // 3자리아니거나 타입이 숫자아니면
-        if (input.length !== 3 || isNaN(input)) {
-          // 숫자면isNaN false / 숫자가아니면 true
-          alert('숫자 3자리만 입력가능합니다. 다시 입력해주세요');
-          return;
+        while (answerArr.length < 3) {
+          const num = Math.floor(Math.random() * 10);
+          if (!answerArr.includes(num)) {
+            answerArr.push(num);
+          }
         }
 
-        // 숫자 중복체크
-        if (new Set(input).size !== 3) {
-          alert('중복된 숫자는 입력불가합니다. 다시 입력해주세요.');
-        }
+        alert('컴퓨터가 숫자를 생성하였습니다. 답을 맞춰보세요!');
 
-        return true;
-      };
+        let round = 1;
+        let input;
 
-      // 사용자에게 값 받아오기
-      while (true) {
-          round === 1 ? (input = prompt(`${round} 번째 시도`)) : (input = prompt(`${round} 번째 시도 이전값 ${input}`));
-          
-          // 입력값 검증
-          if (!checkNum(input)) {
+        while (true) {
+          input = prompt(round === 1 ? `${round} 번째 시도` : `${round} 번째 시도 이전값 ${input}`);
+
+          if (!input) {
+            break;
+          }
+
+          if (input.length !== 3 || isNaN(input)) {
+            alert('숫자 3자리만 입력 가능합니다. 다시 입력해주세요.');
             continue;
           }
-          
-          // 취소버튼, 공백 null,undefined false로.
-          if(!input) break;
-          
+
+          if (new Set(input).size !== 3) {
+            alert('중복된 숫자는 입력 불가합니다. 다시 입력해주세요.');
+            continue;
+          }
+
           let strikeCnt = 0;
           let ballCnt = 0;
 
           for (let j = 0; j < answerArr.length; j++) {
             const idx = input.indexOf(answerArr[j]);
             if (input.includes(answerArr[j])) {
-              // 하나라도 같은게 있다면!
               if (idx === j) {
                 strikeCnt++;
               } else {
@@ -73,7 +54,6 @@
             }
           }
 
-          // 결과 출력
           if (strikeCnt === 3) {
             alert(`${round}번만에 성공하셨습니다.`);
             break;
@@ -82,7 +62,9 @@
           }
           round++;
         }
+      };
+
+      playBaseball();
     </script>
-  </head>
-  <body></body>
+  </body>
 </html>
